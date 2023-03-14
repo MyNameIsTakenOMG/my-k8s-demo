@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notif-deployment
+  labels:
+    app: notif-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notif-service
+  template:
+    metadata:
+      name: notif-service-pod
+      labels:
+        app: notif-service
+    spec:
+      containers:
+      - name: notif-service
+        image: seanfangdev/my-k8s-demo-notif_service:v1
+        env:
+        - name: SENDER
+          valueFrom:
+            secretKeyRef:
+              name: spring-cloud-kubernetes-secret
+              key: spring.mail.username
+        - name: SENDER_PWD
+          valueFrom:
+            secretKeyRef:
+              name: spring-cloud-kubernetes-secret
+              key: spring.mail.password
+        - name: RABBIT
+          valueFrom:
+            secretKeyRef:
+              name: rabbitmq-secret
+              key: spring.rabbitmq.username
+        - name: RABBIT_PWD
+          valueFrom:
+            secretKeyRef:
+              name: rabbitmq-secret
+              key: spring.rabbitmq.password
+        ports:
+        - containerPort: 8080
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: notif-service
+spec:
+  selector:
+    app: notif-service
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080

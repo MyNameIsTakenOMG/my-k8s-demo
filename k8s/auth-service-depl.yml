@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-service-deployment
+  labels:
+    app: auth-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-service
+  template:
+    metadata:
+      name: auth-service-pod
+      labels:
+        app: auth-service
+    spec:
+      containers:
+      - name: auth-service
+        image: seanfangdev/my-k8s-demo-auth_service:v1
+        env:
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: auth-credentials
+              key: jwt-secret
+        - name: PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: spring.datasource.password
+        - name: USER
+          valueFrom:
+            configMapKeyRef:
+              name: auth-configmap
+              key: user
+        - name: HOST
+          valueFrom:
+            configMapKeyRef:
+              name: auth-configmap
+              key: host
+        - name: DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: auth-configmap
+              key: database
+        ports:
+        - containerPort: 5002
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-service
+spec:
+  selector:
+    app: auth-service
+  ports:
+    - protocol: TCP
+      port: 5002
+      targetPort: 5002

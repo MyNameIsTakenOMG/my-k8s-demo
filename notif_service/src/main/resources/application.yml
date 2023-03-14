@@ -1,0 +1,46 @@
+#spring:
+#  config:
+#    kubernetes:
+#      enabled: true
+#  application:
+#    name: notif_service
+#  cloud:
+#    kubernetes:
+#      config:
+#        namespace: default
+#        sources:
+#        - name: notif-service-configmap
+#      secrets:
+#        namespace: default
+#        sources:
+#          - name: notif-service-credentials
+
+spring:
+  application:
+    name: notif_service
+  cloud:
+    kubernetes:
+      secrets:
+        name: spring-cloud-kubernetes-secret
+        namespace: default
+        enabled: true
+        enableApi: true
+  mail:
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: 'true'
+          auth: 'true'
+    host: smtp.gmail.com
+    username: ${SENDER}
+    password: ${SENDER_PWD}
+#    username: seanfangdev@gmail.com
+#    password: hokskfqprrdjccec
+    port: '587'
+  rabbitmq:
+    host: rabbitmq-service
+    username: ${RABBIT}
+    password: ${RABBIT_PWD}
+#    username: default_user_HOptb6Th07olPFhbQWn
+#    password: nvtHBg_xinSXqktSUorqPHbc7Mg0RSfp

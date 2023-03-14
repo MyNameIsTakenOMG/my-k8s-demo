@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-processing-deployment
+  labels:
+    app: order-processing
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: order-processing
+  template:
+    metadata:
+      name: order-processing-pod
+      labels:
+        app: order-processing
+    spec:
+      containers:
+      - name: order-processing
+        image: seanfangdev/my-k8s-demo-order_processing_service:v1
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: spring.datasource.password
+        - name: RABBIT
+          valueFrom:
+            secretKeyRef:
+              name: rabbitmq-secret
+              key: spring.rabbitmq.username
+        - name: RABBIT_PWD
+          valueFrom:
+            secretKeyRef:
+              name: rabbitmq-secret
+              key: spring.rabbitmq.password
+        - name: HOST
+          valueFrom:
+            configMapKeyRef:
+              name: order-processing-configmap
+              key: host
+        - name: DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: order-processing-configmap
+              key: database
+        - name: USER
+          valueFrom:
+            configMapKeyRef:
+              name: order-processing-configmap
+              key: user
+        ports:
+        - containerPort: 8080
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-processing-service
+spec:
+  selector:
+    app: order-processing
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080

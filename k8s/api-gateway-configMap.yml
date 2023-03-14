@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-gateway-configmap
+data:
+  amqp: rabbitmq-service
+  auth_url: http://auth-service:5002
+  database: my-k8s-demo-db
+  host: mysql-service
+  user: root
+
