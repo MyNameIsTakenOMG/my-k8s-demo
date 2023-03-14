@@ -35,12 +35,8 @@ spring:
     host: smtp.gmail.com
     username: ${SENDER}
     password: ${SENDER_PWD}
-#    username: seanfangdev@gmail.com
-#    password: hokskfqprrdjccec
     port: '587'
   rabbitmq:
     host: rabbitmq-service
     username: ${RABBIT}
     password: ${RABBIT_PWD}
-#    username: default_user_HOptb6Th07olPFhbQWn
-#    password: nvtHBg_xinSXqktSUorqPHbc7Mg0RSfp
